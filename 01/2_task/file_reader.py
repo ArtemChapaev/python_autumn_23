@@ -3,7 +3,7 @@ import io
 
 
 def file_reader(filename, words: list) -> str:
-    if (not isinstance(filename, str) and not isinstance(filename, io.TextIOBase)):
+    if not isinstance(filename, str) and not isinstance(filename, io.TextIOBase):
         raise TypeError("filename must be str or io.TextIOBase")
 
     if not isinstance(words, list):
