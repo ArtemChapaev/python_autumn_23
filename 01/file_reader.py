@@ -10,16 +10,14 @@ def file_reader(filename, words: list) -> str:
         raise TypeError("words must be list")
 
     # we delete word if it's equal ""
-    words_with_spaces = [" " + w + " " for w in words if w]
+    words_with_spaces = [" " + w.lower() + " " for w in words if w]
 
     with open(filename, "r", encoding="UTF-8") if isinstance(filename, str) else filename as file:
 
         for line in file:
             line = re.match(r"[^\n\r]*", line).group(0)
-            line_with_spaces = " " + line + " "
-            line_with_spaces.lower()
+            line_with_spaces = " " + line.lower() + " "
 
-            found_words = [w for w in words_with_spaces
-                           if w in line_with_spaces]
+            found_words = [w for w in words_with_spaces if w in line_with_spaces]
             if found_words:
                 yield line

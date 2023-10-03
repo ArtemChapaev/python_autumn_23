@@ -41,3 +41,9 @@ assert predict_message_mood("Вулкан", model) == "неуд"
 ### 4. Перед отправкой на проверку код должен быть прогнан через flake8 и pylint, по желанию еще black
 
 ### 5. Покрытие тестов через coverage, отчет в репу
+
+#### Покрытие тестов для первого задания с моделью
+<image src="coverage_report_tsk1.png">
+
+#### Покрытие тестов для второго задания с генератором
+<image src="coverage_report_tsk2.png">

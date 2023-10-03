@@ -25,63 +25,76 @@ python-чик, С++ и тесты
             gen = file_reader("/tmp/file2", ["тесты"])
             self.assertEqual(next(gen), "тесты, тесты и еще раз тесты")
             self.assertEqual(next(gen), "python-чик, С++ и тесты")
+            with self.assertRaises(StopIteration) as err:
+                next(gen)
+                self.assertEqual(StopIteration, type(err.exception))
 
             gen = file_reader("/tmp/file2", ["раз", "С++"])
             self.assertEqual(next(gen), "тесты, тесты и еще раз тесты")
             self.assertEqual(next(gen), "python-чик, С++ и тесты")
+            with self.assertRaises(StopIteration) as err:
+                next(gen)
+                self.assertEqual(StopIteration, type(err.exception))
 
             gen = file_reader("/tmp/file2", ["раз"])
             self.assertEqual(next(gen), "тесты, тесты и еще раз тесты")
-
             with self.assertRaises(StopIteration) as err:
                 next(gen)
                 self.assertEqual(StopIteration, type(err.exception))
 
     def test_file_object_search(self):
-        with open("test_file.txt", 'r', encoding="UTF-8") as file:
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
             gen = file_reader(file, ["тесты"])
             self.assertEqual(next(gen), "тесты, тесты и еще раз тесты")
             self.assertEqual(next(gen), "python-чик, С++ и тесты")
+            with self.assertRaises(StopIteration) as err:
+                next(gen)
+                self.assertEqual(StopIteration, type(err.exception))
 
-        with open("test_file.txt", 'r', encoding="UTF-8") as file:
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
             gen = file_reader(file, ["раз", "С++"])
             self.assertEqual(next(gen), "тесты, тесты и еще раз тесты")
             self.assertEqual(next(gen), "python-чик, С++ и тесты")
+            with self.assertRaises(StopIteration) as err:
+                next(gen)
+                self.assertEqual(StopIteration, type(err.exception))
 
-        with open("test_file.txt", 'r', encoding="UTF-8") as file:
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
             gen = file_reader(file, ["раз"])
             self.assertEqual(next(gen), "тесты, тесты и еще раз тесты")
+            with self.assertRaises(StopIteration) as err:
+                next(gen)
+                self.assertEqual(StopIteration, type(err.exception))
 
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
+            gen = file_reader(file, ["Раз"])
+            self.assertEqual(next(gen), "тесты, тесты и еще раз тесты")
             with self.assertRaises(StopIteration) as err:
                 next(gen)
                 self.assertEqual(StopIteration, type(err.exception))
 
     def test_with_special_words(self):
-        with open("test_file.txt", 'r', encoding="UTF-8") as file:
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
             gen = file_reader(file, [])
-
             with self.assertRaises(StopIteration) as err:
                 next(gen)
                 self.assertEqual(StopIteration, type(err.exception))
 
-        with open("test_file.txt", 'r', encoding="UTF-8") as file:
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
             gen = file_reader(file, [""])
-
             with self.assertRaises(StopIteration) as err:
                 next(gen)
                 self.assertEqual(StopIteration, type(err.exception))
 
-        with open("test_file.txt", 'r', encoding="UTF-8") as file:
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
             gen = file_reader(file, ["Java", "неправильно"])
-
             with self.assertRaises(StopIteration) as err:
                 next(gen)
                 self.assertEqual(StopIteration, type(err.exception))
 
     def test_with_error_types(self):
-        with open("test_file.txt", 'r', encoding="UTF-8") as file:
+        with open("file_reader_test_file.txt", 'r', encoding="UTF-8") as file:
             gen = file_reader(12, ["тесты"])
-
             with self.assertRaises(TypeError) as err:
                 next(gen)
                 self.assertEqual(TypeError, type(err.exception))
