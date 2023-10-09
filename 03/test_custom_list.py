@@ -3,7 +3,7 @@ import unittest
 from custom_list import CustomList
 
 
-class MyTestCase(unittest.TestCase):
+class TestCustomList(unittest.TestCase):
 
     def test_custom_list_creating(self):
         CustomList()
