@@ -4,8 +4,15 @@ class CustomList(list):
             super().__init__()
             return
 
-        if not isinstance(lst, list):
-            raise TypeError(f"lst must be list, not {type(lst)}")
+        if isinstance(lst, str):
+            raise TypeError("lst can't be str")
+
+        try:
+            iterator = iter(lst)
+        except TypeError:
+            raise TypeError(f"lst must be iterable, not {type(lst)}")
+        else:
+            super().__init__(iterator)
 
         for element in lst:
             if not isinstance(element, int) and not isinstance(element, float):

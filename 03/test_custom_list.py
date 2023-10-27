@@ -3,26 +3,67 @@ import unittest
 from custom_list import CustomList
 
 
+def check_equality(list1, list2):
+    if len(list1) != len(list2):
+        return False
+
+    for el1, el2 in zip(list1, list2):
+        if el1 != el2:
+            return False
+
+    return True
+
+
 class TestCustomList(unittest.TestCase):
 
     def test_custom_list_creating(self):
         CustomList()
         CustomList([1, 2, 4])
+        CustomList((1, 2, 4))
         CustomList([1, 2.2, -4])
+        CustomList(range(10))
 
     def test_custom_lists_adding(self):
-        self.assertEqual(CustomList([5, 1, 3, 7]) + CustomList([1, 2, 7]),
-                         CustomList([6, 3, 10, 7]))
+        actual = CustomList([5, 1, 3, 7]) + CustomList([1, 2, 7])
+        expected = CustomList([6, 3, 10, 7])
+        self.assertTrue(check_equality(actual, expected))
 
-        self.assertEqual(CustomList([1]) + [2, 5], CustomList([3, 5]))
-        self.assertEqual([2, 5] + CustomList([1]), CustomList([3, 5]))
+        actual = CustomList([1]) + [2, 5]
+        expected = CustomList([3, 5])
+        self.assertTrue(check_equality(actual, expected))
+
+        actual = [2, 5] + CustomList([1])
+        expected = CustomList([3, 5])
+        self.assertTrue(check_equality(actual, expected))
+
+        actual = CustomList([2, 5]) + [1]
+        expected = CustomList([3, 5])
+        self.assertTrue(check_equality(actual, expected))
+
+        actual = [1] + CustomList([2, 5])
+        expected = CustomList([3, 5])
+        self.assertTrue(check_equality(actual, expected))
 
     def test_custom_lists_subtracting(self):
-        self.assertEqual(CustomList([5, 1, 3, 7]) - CustomList([1, 2, 7]),
-                         CustomList([4, -1, -4, 7]))
+        actual = CustomList([5, 1, 3, 7]) - CustomList([1, 2, 7])
+        expected = CustomList([4, -1, -4, 7])
+        self.assertTrue(check_equality(actual, expected))
 
-        self.assertEqual(CustomList([1]) - [2, 5], CustomList([-1, -5]))
-        self.assertEqual([2, 5] - CustomList([1]), CustomList([1, 5]))
+        actual = CustomList([1]) - [2, 5]
+        expected = CustomList([-1, -5])
+        self.assertTrue(check_equality(actual, expected))
+
+        actual = [1] - CustomList([2, 5])
+        expected = CustomList([-1, -5])
+        self.assertTrue(check_equality(actual, expected))
+
+        actual = [2, 5] - CustomList([1])
+        expected = CustomList([1, 5])
+        self.assertTrue(check_equality(actual, expected))
+
+        actual = CustomList([2, 5]) - [1]
+        expected = CustomList([1, 5])
+        self.assertTrue(check_equality(actual, expected))
 
     def test_custom_lists_immutability(self):
         custom_list_a = CustomList([5, 1, 3, 7])
@@ -58,19 +99,19 @@ class TestCustomList(unittest.TestCase):
         self.assertEqual(custom_list_b, copy_custom_list_b)
 
     def test_custom_lists_comparison(self):
-        self.assertEqual(CustomList([5, 1, 3, 7]) > CustomList([1, 2, 7]), True)
-        self.assertEqual(CustomList([5, 1, 3, 7]) == CustomList([7, 2, 7]), True)
-        self.assertEqual(CustomList([5, 1, 3, 7]) < CustomList([10, 2, 7]), True)
-        self.assertEqual(CustomList([5, 1, 3, 7]) >= CustomList([5, 1, 3, 6]), True)
-        self.assertEqual(CustomList([5, 1, 3, 7]) != CustomList([5, 1, 3, 6]), True)
-        self.assertEqual(CustomList([5, 1, 3, 7]) >= CustomList([16]), True)
+        self.assertTrue(CustomList([5, 1, 3, 7]) > CustomList([1, 2, 7]))
+        self.assertTrue(CustomList([5, 1, 3, 7]) == CustomList([7, 2, 7]))
+        self.assertTrue(CustomList([5, 1, 3, 7]) < CustomList([10, 2, 7]))
+        self.assertTrue(CustomList([5, 1, 3, 7]) >= CustomList([5, 1, 3, 6]))
+        self.assertTrue(CustomList([5, 1, 3, 7]) != CustomList([5, 1, 3, 6]))
+        self.assertTrue(CustomList([5, 1, 3, 7]) >= CustomList([16]))
 
-        self.assertEqual(CustomList([5, 1, 3, 7]) <= CustomList([1, 2, 7]), False)
-        self.assertEqual(CustomList([5, 1, 3, 7]) > CustomList([7, 2, 7]), False)
-        self.assertEqual(CustomList([5, 1, 3, 7]) >= CustomList([10, 2, 7]), False)
-        self.assertEqual(CustomList([5, 1, 3, 7]) < CustomList([5, 1, 3, 6]), False)
-        self.assertEqual(CustomList([5, 1, 3, 7]) == CustomList([5, 1, 3, 6]), False)
-        self.assertEqual(CustomList([5, 1, 3, 7]) != CustomList([16]), False)
+        self.assertFalse(CustomList([5, 1, 3, 7]) <= CustomList([1, 2, 7]))
+        self.assertFalse(CustomList([5, 1, 3, 7]) > CustomList([7, 2, 7]))
+        self.assertFalse(CustomList([5, 1, 3, 7]) >= CustomList([10, 2, 7]))
+        self.assertFalse(CustomList([5, 1, 3, 7]) < CustomList([5, 1, 3, 6]))
+        self.assertFalse(CustomList([5, 1, 3, 7]) == CustomList([5, 1, 3, 6]))
+        self.assertFalse(CustomList([5, 1, 3, 7]) != CustomList([16]))
 
     def test_custom_lists_str(self):
         self.assertEqual(str(CustomList([5, 1, 3, 7])), "[5, 1, 3, 7], sum = 16")
