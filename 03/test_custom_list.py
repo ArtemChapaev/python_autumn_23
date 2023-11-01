@@ -15,14 +15,6 @@ def check_equality(list1, list2):
 
 
 class TestCustomList(unittest.TestCase):
-
-    def test_custom_list_creating(self):
-        CustomList()
-        CustomList([1, 2, 4])
-        CustomList((1, 2, 4))
-        CustomList([1, 2.2, -4])
-        CustomList(range(10))
-
     def test_custom_lists_adding(self):
         actual = CustomList([5, 1, 3, 7]) + CustomList([1, 2, 7])
         expected = CustomList([6, 3, 10, 7])
@@ -75,28 +67,28 @@ class TestCustomList(unittest.TestCase):
         copy_list_c = list(list_c)
 
         custom_list_a + custom_list_b
-        self.assertEqual(custom_list_a, copy_custom_list_a)
-        self.assertEqual(custom_list_b, copy_custom_list_b)
+        self.assertTrue(check_equality(custom_list_a, copy_custom_list_a))
+        self.assertTrue(check_equality(custom_list_b, copy_custom_list_b))
 
         custom_list_b + list_c
-        self.assertEqual(custom_list_b, copy_custom_list_b)
-        self.assertEqual(list_c, copy_list_c)
+        self.assertTrue(check_equality(custom_list_b, copy_custom_list_b))
+        self.assertTrue(check_equality(list_c, copy_list_c))
 
         list_c + custom_list_b
-        self.assertEqual(list_c, copy_list_c)
-        self.assertEqual(custom_list_b, copy_custom_list_b)
+        self.assertTrue(check_equality(list_c, copy_list_c))
+        self.assertTrue(check_equality(custom_list_b, copy_custom_list_b))
 
         custom_list_a - custom_list_b
-        self.assertEqual(custom_list_a, copy_custom_list_a)
-        self.assertEqual(custom_list_b, copy_custom_list_b)
+        self.assertTrue(check_equality(custom_list_a, copy_custom_list_a))
+        self.assertTrue(check_equality(custom_list_b, copy_custom_list_b))
 
         custom_list_b - list_c
-        self.assertEqual(custom_list_b, copy_custom_list_b)
-        self.assertEqual(list_c, copy_list_c)
+        self.assertTrue(check_equality(custom_list_b, copy_custom_list_b))
+        self.assertTrue(check_equality(list_c, copy_list_c))
 
         list_c - custom_list_b
-        self.assertEqual(list_c, copy_list_c)
-        self.assertEqual(custom_list_b, copy_custom_list_b)
+        self.assertTrue(check_equality(list_c, copy_list_c))
+        self.assertTrue(check_equality(custom_list_b, copy_custom_list_b))
 
     def test_custom_lists_comparison(self):
         self.assertTrue(CustomList([5, 1, 3, 7]) > CustomList([1, 2, 7]))
@@ -120,44 +112,28 @@ class TestCustomList(unittest.TestCase):
 
     def test_custom_lists_error_types(self):
         with self.assertRaises(TypeError) as err:
-            CustomList(False)
-            self.assertEqual(TypeError, type(err.exception))
-
-        with self.assertRaises(TypeError) as err:
-            CustomList(1)
-            self.assertEqual(TypeError, type(err.exception))
-
-        with self.assertRaises(TypeError) as err:
-            CustomList("str")
-            self.assertEqual(TypeError, type(err.exception))
-
-        with self.assertRaises(TypeError) as err:
-            CustomList([5, "str", 3, 7])
-            self.assertEqual(TypeError, type(err.exception))
-
-        with self.assertRaises(TypeError) as err:
             CustomList([5, 1, 3, 7]) + 1
-            self.assertEqual(TypeError, type(err.exception))
+        self.assertEqual(type(err.exception), TypeError)
 
         with self.assertRaises(TypeError) as err:
             CustomList([5, 1, 3, 7]) - "str"
-            self.assertEqual(TypeError, type(err.exception))
+        self.assertEqual(type(err.exception), TypeError)
 
         with self.assertRaises(TypeError) as err:
             1.1 + CustomList([5, 1, 3, 7])
-            self.assertEqual(TypeError, type(err.exception))
+        self.assertEqual(type(err.exception), TypeError)
 
         with self.assertRaises(TypeError) as err:
             1.1 > CustomList([5, 1, 3, 7])
-            self.assertEqual(TypeError, type(err.exception))
+        self.assertEqual(type(err.exception), TypeError)
 
         with self.assertRaises(TypeError) as err:
             [1, 2, 3] > CustomList([5, 1, 3, 7])
-            self.assertEqual(TypeError, type(err.exception))
+        self.assertEqual(type(err.exception), TypeError)
 
         with self.assertRaises(TypeError) as err:
             [5, 1, 3, 7] == CustomList([5, 1, 3, 7])
-            self.assertEqual(TypeError, type(err.exception))
+        self.assertEqual(type(err.exception), TypeError)
 
 
 if __name__ == '__main__':

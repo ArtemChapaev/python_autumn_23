@@ -1,24 +1,4 @@
 class CustomList(list):
-    def __init__(self, lst=None):
-        if lst is None:
-            super().__init__()
-            return
-
-        if isinstance(lst, str):
-            raise TypeError("lst can't be str")
-
-        try:
-            iterator = iter(lst)
-        except TypeError:
-            raise TypeError(f"lst must be iterable, not {type(lst)}")
-        else:
-            super().__init__(iterator)
-
-        for element in lst:
-            if not isinstance(element, int) and not isinstance(element, float):
-                raise TypeError("lst must be numerical")
-
-        super().__init__(lst)
 
     def __add__(self, other):
         if not isinstance(other, list):
