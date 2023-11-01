@@ -1,0 +1,10 @@
+<a class="jsl10n" data-jsl10n="portal.app-links.url" href="https://en.wikipedia.org/wiki/List_of_Wikipedia_mobile_applications">
+Download Wikipedia for Android or iOS
+</a>
+</strong>
+<p class="jsl10n" data-jsl10n="portal.app-links.description">
+Save your favorite articles to read offline, sync your reading lists across devices and customize your reading experience with the official Wikipedia app.
+</p>
+<ul>
+<li class="app-badge app-badge-android">
+<a target="_blank" rel="noreferrer" href="https://play.google.com/store/apps/details?id=org.wikipedia&referrer=utm_source%3Dportal%26utm_medium%3Dbutton%26anid%3Dadmob">
