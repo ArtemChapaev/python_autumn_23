@@ -38,57 +38,57 @@ class TestServerArguments(unittest.TestCase):
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('server.py', '-w', '10')
             server.check_arguments()  # 'server.py', '-w', '10'
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('server.py', '-k', '7', '-w')
             server.check_arguments()
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('server.py', '100', '100')
             server.check_arguments()
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('server.py', '-k', '7', '-w', '100', '100')
             server.check_arguments()
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('server.py', '-k', '7', '-k', '10')
             server.check_arguments()
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('server.py', '-w', '1', '-k', '0')
             server.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('server.py', '-w', '0', '-k', '1')
             server.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('server.py', '-w', '-10', '-k', '1')
             server.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('server.py', '-w', '1', '-k', '-10')
             server.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('server.py', '-w', '1.5', '-k', '1')
             server.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('server.py', '-w', '1', '-k', '10.5')
             server.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
 
 class TestClientArguments(unittest.TestCase):
@@ -113,37 +113,37 @@ class TestClientArguments(unittest.TestCase):
         with self.assertRaises(ValueError) as err:
             sys.argv = ('client.py', 'urls.txt', '10')
             client.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('client.py', 'urls.txt')
             client.check_arguments()
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('client.py', 'urls.txt', '11', '11')
             client.check_arguments()
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(RuntimeError) as err:
             sys.argv = ('client.py', '10')
             client.check_arguments()
-            self.assertEqual(RuntimeError, type(err.exception))
+        self.assertEqual(RuntimeError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('client.py', '-1', 'urls.txt')
             client.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('client.py', '0', 'urls.txt')
             client.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             sys.argv = ('client.py', '-1.5', 'urls.txt')
             client.check_arguments()
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
 
 class TestClientURLs(unittest.TestCase):
@@ -171,7 +171,7 @@ https://www.ebay.com
     def test_client_getting_urls_error(self):
         with self.assertRaises(FileNotFoundError) as err:
             client.get_urls_for_processing('some_fdsaf.txt')
-            self.assertEqual(FileNotFoundError, type(err.exception))
+        self.assertEqual(FileNotFoundError, type(err.exception))
 
 
 if __name__ == '__main__':
