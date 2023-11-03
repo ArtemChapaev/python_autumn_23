@@ -82,12 +82,16 @@ class Server:
     def _process_connection(self, client_sock):
         url = self._read_data(client_sock)
 
-        text = self._fetch_url(url)
-        top_words = self._get_top_words_from_text(text)
+        if url:
+            text = self._fetch_url(url)
+            top_words = self._get_top_words_from_text(text)
 
-        data = url + ": " + top_words
+            data = url + ": " + top_words
 
-        client_sock.send(data.encode())
+            client_sock.send(data.encode())
+        else:
+            client_sock.send("URL is empty".encode())
+
         client_sock.close()
 
         with self.lock:

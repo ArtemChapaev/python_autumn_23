@@ -95,6 +95,39 @@ class TestServer(unittest.TestCase):
                             # _process_connection must discard current_thread from worker_threads
                             self.assertEqual(server.worker_threads, set())
 
+    def test_process_connection_with_empty_url(self):
+        empty_url = ''
+        empty_url_data = "URL is empty"
+
+        mock_current_worker_thread_value = 1
+
+        server = Server(10, 7)
+        server.worker_threads.add(mock_current_worker_thread_value)
+
+        with mock.patch("builtins.print") as mock_print:
+            with mock.patch("threading.current_thread") as mock_current_thread:
+                mock_current_thread.return_value = mock_current_worker_thread_value
+
+                with mock.patch.object(server, '_read_data') as mock_read_data:
+                    mock_read_data.return_value = empty_url
+
+                    mock_client_socket = mock.MagicMock()
+                    server._process_connection(mock_client_socket)
+
+                    # _process_connection must read url
+                    mock_read_data.assert_called_once_with(mock_client_socket)
+
+                    # _process_connection must send data and close socket
+                    mock_client_socket.send.assert_called_once_with(empty_url_data.encode())
+                    mock_client_socket.close.assert_called_once()
+
+                    # _process_connection must increase processed_urls and print it
+                    self.assertEqual(server.processed_urls, 1)
+                    mock_print.assert_called_once_with("Processed 1 url(s)")
+
+                    # _process_connection must discard current_thread from worker_threads
+                    self.assertEqual(server.worker_threads, set())
+
 
 if __name__ == '__main__':
     unittest.main()
