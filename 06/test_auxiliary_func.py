@@ -1,5 +1,4 @@
 import unittest
-from unittest import mock
 import sys
 
 import server
@@ -144,34 +143,6 @@ class TestClientArguments(unittest.TestCase):
             sys.argv = ('client.py', '-1.5', 'urls.txt')
             client.check_arguments()
         self.assertEqual(ValueError, type(err.exception))
-
-
-class TestClientURLs(unittest.TestCase):
-    mock_file_content = """\
-https://www.wikipedia.org
-https://www.ebay.com
-"""
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_client_getting_urls(self):
-        with mock.patch(
-                'builtins.open',
-                new=mock.mock_open(read_data=self.mock_file_content),
-                create=True
-        ) as mock_open_file:
-            urls = client.get_urls_for_processing('urls.txt')
-            self.assertEqual(urls, ['https://www.wikipedia.org', 'https://www.ebay.com'])
-            mock_open_file.assert_called_once_with('urls.txt', 'r', encoding='utf-8')
-
-    def test_client_getting_urls_error(self):
-        with self.assertRaises(FileNotFoundError) as err:
-            client.get_urls_for_processing('some_fdsaf.txt')
-        self.assertEqual(FileNotFoundError, type(err.exception))
 
 
 if __name__ == '__main__':

@@ -17,12 +17,6 @@ def check_arguments():
     return threads_count, arguments[2]
 
 
-def get_urls_for_processing(filename):
-    # in not open FileNotFoundError will be raised
-    with open(filename, 'r', encoding='utf-8') as file:
-        return [url.strip() for url in file.readlines()]
-
-
 class Client:
     def __init__(self, threads_limit):
         self.threads_limit = threads_limit
@@ -61,16 +55,18 @@ class Client:
         with self.lock:
             self.threads.discard(threading.current_thread())
 
-    def start(self, urls):
-        for url in urls:
-            # while one thread doesn't become free, we are in this loop
-            while True:
-                if self._check_free_threads():
-                    thread = threading.Thread(target=self._process_url, args=(url,))
-                    thread.start()
-                    with self.lock:
-                        self.threads.add(thread)
-                    break
+    def start(self, filename):
+        # if not open FileNotFoundError will be raised
+        with open(filename, 'r', encoding='utf-8') as file:
+            for url in file:
+                # while one thread doesn't become free, we are in this loop
+                while True:
+                    if self._check_free_threads():
+                        thread = threading.Thread(target=self._process_url, args=(url,))
+                        thread.start()
+                        with self.lock:
+                            self.threads.add(thread)
+                        break
 
         with self.lock:
             for thread in self.threads:
@@ -79,7 +75,6 @@ class Client:
 
 if __name__ == '__main__':
     num_threads, url_filename = check_arguments()
-    client = Client(num_threads)
 
-    urls_for_processing = get_urls_for_processing(url_filename)
-    client.start(urls_for_processing)
+    client = Client(num_threads)
+    client.start(url_filename)
