@@ -13,46 +13,70 @@ class MyParseJson(unittest.TestCase):
 
     def test_simple_case(self):
         json_str = '{"key1": "Word1 word2", "key2": "word2 word3"}'
-        keywords = ["key1"]
-        required_fields = ["word2"]
+        required_fields = ["key1"]
+        keywords = ["word2"]
 
         mock_callback = mock.Mock(return_value=None)
-        parse_json(json_str, keywords, required_fields, mock_callback)
+        parse_json(json_str, required_fields, keywords, mock_callback)
 
-        mock_callback.assert_called_once_with("word2")
+        mock_callback.assert_called_once_with("key1", "word2")
 
     def test_case_insensitivity(self):
         json_str = '{"key1": "Word1 word2", "key2": "word2 word3"}'
-        keywords = ["key1"]
-        required_fields = ["word1"]
+        required_fields = ["key1"]
 
+        keywords = ["word1"]
         mock_callback = mock.Mock(return_value=None)
-        parse_json(json_str, keywords, required_fields, mock_callback)
 
-        mock_callback.assert_called_once_with("word1")
+        parse_json(json_str, required_fields, keywords, mock_callback)
+        mock_callback.assert_called_once_with("key1", "word1")
+
+        keywords = ["Word2"]
+        mock_callback = mock.Mock(return_value=None)
+
+        parse_json(json_str, required_fields, keywords, mock_callback)
+        mock_callback.assert_called_once_with("key1", "word2")
 
     def test_multiple_callback_calls(self):
         json_str = '{"key1": "Word1 word2", "key2": "word2 word3"}'
-        keywords = ["key1", "key2"]
-        required_fields = ["word1", "word3"]
+
+        required_fields = ["key1", "key2"]
+        keywords = ["word1", "word3"]
+        mock_callback = mock.Mock(return_value=None)
+
+        parse_json(json_str, required_fields, keywords, mock_callback)
+        expected_calls = [
+            mock.call("key1", "word1"),
+            mock.call("key2", "word3")
+        ]
+        self.assertEqual(expected_calls, mock_callback.mock_calls)
+
+        required_fields = ["key1", "key2"]
+        keywords = ["word2"]
 
         mock_callback = mock.Mock(return_value=None)
-        parse_json(json_str, keywords, required_fields, mock_callback)
-
+        parse_json(json_str, required_fields, keywords, mock_callback)
         expected_calls = [
-            mock.call("word1"),
-            mock.call("word3")
+            mock.call("key1", "word2"),
+            mock.call("key2", "word2")
         ]
         self.assertEqual(expected_calls, mock_callback.mock_calls)
 
     def test_not_called_callback(self):
         json_str = '{"key1": "Word1 word2", "key2": "word2 word3"}'
-        keywords = ["key1"]
-        required_fields = ["word3"]
 
+        required_fields = ["key1"]
+        keywords = ["word3"]
         mock_callback = mock.Mock(return_value=None)
-        parse_json(json_str, keywords, required_fields, mock_callback)
 
+        parse_json(json_str, required_fields, keywords, mock_callback)
+        mock_callback.assert_not_called()
+
+        required_fields = ["key1"]
+        keywords = ["word4"]
+        mock_callback = mock.Mock(return_value=None)
+
+        parse_json(json_str, required_fields, keywords, mock_callback)
         mock_callback.assert_not_called()
 
     def test_multiple_uses_with_error_types(self):
@@ -67,11 +91,12 @@ class MyParseJson(unittest.TestCase):
 
     def test_empty_json_str(self):
         json_str = ""
-        keywords = []
         required_fields = []
+        keywords = []
 
         mock_callback = mock.Mock(return_value=None)
-        parse_json(json_str, keywords, required_fields, mock_callback)
+
+        parse_json(json_str, required_fields, keywords, mock_callback)
         mock_callback.assert_not_called()
 
 

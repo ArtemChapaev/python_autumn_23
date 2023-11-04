@@ -23,9 +23,13 @@ class TestMeanDecorator(unittest.TestCase):
                     time.sleep(1)
 
                 dummy_function()
-                mock_print.assert_called_once_with(
-                    "Mean time of executing of dummy_function is 1.0"
-                )
+
+                expected_calls = [
+                    mock.call("Mean time of executing of dummy_function is 1.0"),
+                    mock.call("Mean time of executing of dummy_function is 1.0"),
+                    mock.call("Mean time of executing of dummy_function is 1.0")
+                ]
+                self.assertEqual(expected_calls, mock_print.mock_calls)
 
     def test_zero_time_execution(self):
         with mock.patch("builtins.print") as mock_print:
@@ -37,9 +41,12 @@ class TestMeanDecorator(unittest.TestCase):
                     pass
 
                 dummy_function()
-                mock_print.assert_called_once_with(
-                    "Mean time of executing of dummy_function is 0.0"
-                                                   )
+
+                expected_calls = [
+                    mock.call("Mean time of executing of dummy_function is 0.0"),
+                    mock.call("Mean time of executing of dummy_function is 0.0")
+                ]
+                self.assertEqual(expected_calls, mock_print.mock_calls)
 
     def test_different_time_execution(self):
         with mock.patch("builtins.print") as mock_print:
@@ -51,9 +58,14 @@ class TestMeanDecorator(unittest.TestCase):
                     time.sleep(1)
 
                 dummy_function()
-                mock_print.assert_called_once_with(
-                    "Mean time of executing of dummy_function is 1.25"
-                                                   )
+
+                expected_calls = [
+                    mock.call("Mean time of executing of dummy_function is 1.0"),
+                    mock.call("Mean time of executing of dummy_function is 1.0"),
+                    mock.call("Mean time of executing of dummy_function is 1.0"),
+                    mock.call("Mean time of executing of dummy_function is 1.25")
+                ]
+                self.assertEqual(expected_calls, mock_print.mock_calls)
 
     def test_use_with_error_type(self):
         with self.assertRaises(TypeError):

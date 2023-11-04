@@ -7,14 +7,17 @@ def mean(k: int):
 
     def mean_inner(func):
         def inner(*args, **kwargs):
+            res = None
+
             full_time = 0
-            for _ in range(k):
+            for i in range(1, k + 1):
                 start_ts = time.time()
-                func(*args, **kwargs)
+                res = func(*args, **kwargs)
                 end_ts = time.time()
                 delta_time = end_ts - start_ts
                 full_time += delta_time
+                print(f"Mean time of executing of {func.__name__} is {full_time / i}")
 
-            print(f"Mean time of executing of {func.__name__} is {full_time / k}")
+            return res
         return inner
     return mean_inner
