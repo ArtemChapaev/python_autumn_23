@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 import sys
+import time
 import asyncio
 
 from fetcher import Fetcher, check_arguments
@@ -12,6 +13,50 @@ class TestFetcher(unittest.IsolatedAsyncioTestCase):
 
     def tearDown(self):
         pass
+
+    async def test_fetcher(self):
+        url_count = 68
+        texts = [("text" + str(i)).encode() for i in range(url_count)]
+
+        with mock.patch("aiohttp.ClientSession") as mock_session_init:
+            mock_session = mock.MagicMock()
+            mock_response = mock.AsyncMock()
+
+            async def fake_get(url):
+                await asyncio.sleep(0.001)
+                return await mock_response
+
+            mock_session_init.return_value.__aenter__.side_effect = [mock_session for _ in range(url_count)]
+            mock_session.get.return_value.__aenter__.side_effect = fake_get
+            mock_response.text.side_effect = texts
+
+            fetcher = Fetcher(10, 3)
+            timestamp1 = time.time()
+            await fetcher.start('urls.txt')
+            timestamp2 = time.time()
+
+        fetcher_10_connections_time = timestamp2 - timestamp1
+
+        with mock.patch("aiohttp.ClientSession") as mock_session_init:
+            mock_session = mock.MagicMock()
+            mock_response = mock.AsyncMock()
+
+            async def fake_get(url):
+                await asyncio.sleep(0.001)
+                return await mock_response
+
+            mock_session_init.return_value.__aenter__.side_effect = [mock_session for _ in range(url_count)]
+            mock_session.get.return_value.__aenter__.side_effect = fake_get
+            mock_response.text.side_effect = texts
+
+            fetcher = Fetcher(1, 3)
+            timestamp1 = time.time()
+            await fetcher.start('urls.txt')
+            timestamp2 = time.time()
+
+        fetcher_1_connections_time = timestamp2 - timestamp1
+
+        self.assertTrue(fetcher_1_connections_time > fetcher_10_connections_time)
 
     async def test_one_process_worker(self):
         fetcher = Fetcher(1, 3)

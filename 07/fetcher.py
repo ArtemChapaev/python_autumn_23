@@ -2,6 +2,7 @@ import asyncio
 import sys
 import json
 from collections import Counter
+import time
 
 import aiohttp
 from bs4 import BeautifulSoup
@@ -42,8 +43,6 @@ class Fetcher:
         self.count_top_words = count_top_words
         self.connections_count = connections_count
 
-        self.que = asyncio.Queue()
-
     def _process_text(self, url, text):
         filtered_text = BeautifulSoup(text, 'html.parser').get_text()
 
@@ -73,6 +72,8 @@ class Fetcher:
                 self.que.task_done()
 
     async def start(self, filename):
+        self.que = asyncio.Queue()
+
         workers = [
             asyncio.create_task(self._create_process_worker())
             for _ in range(self.connections_count)
@@ -81,6 +82,7 @@ class Fetcher:
         # if not open FileNotFoundError will be raised
         with open(filename, 'r', encoding='utf-8') as file:
             for url in file:
+                url = url.strip()
                 await self.que.put(url)
 
         await self.que.join()
