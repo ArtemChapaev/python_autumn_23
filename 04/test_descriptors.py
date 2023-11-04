@@ -50,7 +50,7 @@ class TestRomanNumber(unittest.TestCase):
         del event.century
         with self.assertRaises(AttributeError) as err:
             event.century
-            self.assertEqual(AttributeError, type(err.exception))
+        self.assertEqual(AttributeError, type(err.exception))
 
         event.century = 'MVII'
         self.assertEqual(event.century, 'MVII')
@@ -58,42 +58,44 @@ class TestRomanNumber(unittest.TestCase):
     def test_roman_number_error_values(self):
         with self.assertRaises(ValueError) as err:
             self.HistoricalEvent(1)
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.HistoricalEvent('str')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.HistoricalEvent('VK')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.HistoricalEvent('IIII')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.HistoricalEvent('IIX')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.HistoricalEvent('IL')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         event = self.HistoricalEvent('I')
         with self.assertRaises(ValueError) as err:
             event.century = 'LIL'
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         event1 = self.HistoricalEvent('I')
         with self.assertRaises(ValueError) as err:
             event1.century = '1'
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(event1.century, 'I')
 
         event2 = self.HistoricalEvent('I')
         with self.assertRaises(ValueError) as err:
             event2.century = 'IVI'
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(event2.century, 'I')
 
 
 class TestCelsiusDegrees(unittest.TestCase):
@@ -137,7 +139,7 @@ class TestCelsiusDegrees(unittest.TestCase):
         del matter.boiling_temp
         with self.assertRaises(AttributeError) as err:
             matter.boiling_temp
-            self.assertEqual(AttributeError, type(err.exception))
+        self.assertEqual(AttributeError, type(err.exception))
 
         matter.boiling_temp = -1
         self.assertEqual(matter.boiling_temp, -1)
@@ -145,25 +147,27 @@ class TestCelsiusDegrees(unittest.TestCase):
     def test_celsius_degrees_error_values(self):
         with self.assertRaises(ValueError) as err:
             self.Matter('0')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Matter({1: 2.1})
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Matter(-273.16)
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         matter1 = self.Matter(-273)
         with self.assertRaises(ValueError) as err:
             matter1.boiling_temp = {1: 2.1}
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(matter1.boiling_temp, -273)
 
         matter2 = self.Matter(-273)
         with self.assertRaises(ValueError) as err:
             matter2.boiling_temp = -273.16
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(matter2.boiling_temp, -273)
 
 
 class TestTime(unittest.TestCase):
@@ -205,7 +209,7 @@ class TestTime(unittest.TestCase):
         del lecture.start_time
         with self.assertRaises(AttributeError) as err:
             lecture.start_time
-            self.assertEqual(AttributeError, type(err.exception))
+        self.assertEqual(AttributeError, type(err.exception))
 
         lecture.start_time = '23:59'
         self.assertEqual(lecture.start_time, '23:59')
@@ -213,41 +217,43 @@ class TestTime(unittest.TestCase):
     def test_time_error_values(self):
         with self.assertRaises(ValueError) as err:
             self.Lecture(1)
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Lecture('2300')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Lecture('24:00')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Lecture('-1:00')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Lecture('0:00')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Lecture('1:800')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         with self.assertRaises(ValueError) as err:
             self.Lecture('18:0')
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
 
         lecture1 = self.Lecture('18:00')
         with self.assertRaises(ValueError) as err:
             lecture1.start_time = '18:0'
-            self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(lecture1.start_time, '18:00')
 
-        lecture1 = self.Lecture('18:00')
+        lecture2 = self.Lecture('18:00')
         with self.assertRaises(ValueError) as err:
-            lecture1.start_time = 1800
-            self.assertEqual(ValueError, type(err.exception))
+            lecture2.start_time = 1800
+        self.assertEqual(ValueError, type(err.exception))
+        self.assertEqual(lecture2.start_time, '18:00')
 
 
 if __name__ == '__main__':
