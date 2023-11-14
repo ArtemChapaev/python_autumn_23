@@ -15,6 +15,8 @@ class TestFetcher(unittest.IsolatedAsyncioTestCase):
 
     async def test_one_process_worker(self):
         fetcher = Fetcher(1, 3)
+        fetcher.que = asyncio.Queue()
+
         with mock.patch("builtins.print") as mock_print:
             with mock.patch.object(fetcher, '_process_url') as mock_process_url:
                 urls = ['url1', 'url2']
@@ -43,6 +45,8 @@ class TestFetcher(unittest.IsolatedAsyncioTestCase):
 
     async def test_five_process_workers(self):
         fetcher = Fetcher(2, 3)
+        fetcher.que = asyncio.Queue()
+
         with mock.patch("builtins.print") as mock_print:
             with mock.patch.object(fetcher, '_process_url') as mock_process_url:
                 urls = ['url1', 'url2', 'url3', 'url4', 'url5']
@@ -82,6 +86,8 @@ class TestFetcher(unittest.IsolatedAsyncioTestCase):
 
     async def test_five_process_workers_without_data(self):
         fetcher = Fetcher(2, 3)
+        fetcher.que = asyncio.Queue()
+
         with mock.patch("builtins.print") as mock_print:
             with mock.patch.object(fetcher, '_process_url') as mock_process_url:
                 # case without data
@@ -126,7 +132,7 @@ class TestFetcher(unittest.IsolatedAsyncioTestCase):
         text = ''
 
         fetcher = Fetcher(10, 3)
-        self.assertEqual(fetcher._process_text(url, text),"")
+        self.assertEqual(fetcher._process_text(url, text), "")
 
 
 class TestFetcherArguments(unittest.TestCase):
