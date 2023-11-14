@@ -3,6 +3,7 @@ import socket
 import threading
 import json
 from urllib.request import urlopen
+from urllib.error import HTTPError
 from collections import Counter
 
 from bs4 import BeautifulSoup
@@ -67,8 +68,11 @@ class Server:
 
     @staticmethod
     def _fetch_url(url):
-        with urlopen(url) as response:
-            return response.read().decode()
+        try:
+            with urlopen(url) as response:
+                return response.read().decode()
+        except HTTPError:
+            return ""
 
     def _get_top_words_from_text(self, text):
         filtered_text = BeautifulSoup(text, 'html.parser').get_text()
@@ -84,9 +88,11 @@ class Server:
 
         if url:
             text = self._fetch_url(url)
-            top_words = self._get_top_words_from_text(text)
 
-            data = url + ": " + top_words
+            if text:
+                data = url + ": " + self._get_top_words_from_text(text)
+            else:
+                data = url + ": " + 'Error with reading'
 
             client_sock.send(data.encode())
         else:

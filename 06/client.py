@@ -50,7 +50,8 @@ class Client:
         server_socket.send(url.encode())
 
         data = self._read_data(server_socket)
-        print(data)
+        with self.lock:
+            print(data)
 
         with self.lock:
             self.threads.discard(threading.current_thread())
@@ -59,6 +60,7 @@ class Client:
         # if not open FileNotFoundError will be raised
         with open(filename, 'r', encoding='utf-8') as file:
             for url in file:
+                url = url.strip()
                 # while one thread doesn't become free, we are in this loop
                 while True:
                     if self._check_free_threads():
@@ -67,10 +69,6 @@ class Client:
                         with self.lock:
                             self.threads.add(thread)
                         break
-
-        with self.lock:
-            for thread in self.threads:
-                thread.join()
 
 
 if __name__ == '__main__':

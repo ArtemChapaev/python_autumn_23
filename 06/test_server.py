@@ -66,34 +66,34 @@ class TestServer(unittest.TestCase):
         with mock.patch("builtins.print") as mock_print:
             with mock.patch("threading.current_thread") as mock_current_thread:
                 mock_current_thread.return_value = mock_current_worker_thread_value
+                with mock.patch.object(server, '_fetch_url') as mock_fetch_url:
+                    mock_fetch_url.return_value = text
+                    with mock.patch.object(server, '_get_top_words_from_text'
+                                           ) as mock_get_top_words:
+                        mock_get_top_words.return_value = top_words
 
-                with mock.patch.object(server, '_read_data') as mock_read_data:
-                    mock_read_data.return_value = url
-                    with mock.patch.object(server, '_fetch_url') as mock_fetch_url:
-                        mock_fetch_url.return_value = text
-                        with mock.patch.object(server, '_get_top_words_from_text'
-                                               ) as mock_get_top_words:
-                            mock_get_top_words.return_value = top_words
+                        mock_client_socket = mock.MagicMock()
+                        mock_client_socket.recv.return_value = url.encode()
 
-                            mock_client_socket = mock.MagicMock()
-                            server._process_connection(mock_client_socket)
+                        server._process_connection(mock_client_socket)
 
-                            # _process_connection must read url
-                            # and get top_words from _get_top_words_from_text
-                            mock_read_data.assert_called_once_with(mock_client_socket)
-                            mock_fetch_url.assert_called_once_with(url)
-                            mock_get_top_words.assert_called_once_with(text)
+                        # _process_connection must read url
+                        # and get top_words from _get_top_words_from_text
+                        mock_client_socket.recv.assert_called_once()
 
-                            # _process_connection must send data and close socket
-                            mock_client_socket.send.assert_called_once_with(data.encode())
-                            mock_client_socket.close.assert_called_once()
+                        mock_fetch_url.assert_called_once_with(url)
+                        mock_get_top_words.assert_called_once_with(text)
 
-                            # _process_connection must increase processed_urls and print it
-                            self.assertEqual(server.processed_urls, 1)
-                            mock_print.assert_called_once_with("Processed 1 url(s)")
+                        # _process_connection must send data and close socket
+                        mock_client_socket.send.assert_called_once_with(data.encode())
+                        mock_client_socket.close.assert_called_once()
 
-                            # _process_connection must discard current_thread from worker_threads
-                            self.assertEqual(server.worker_threads, set())
+                        # _process_connection must increase processed_urls and print it
+                        self.assertEqual(server.processed_urls, 1)
+                        mock_print.assert_called_once_with("Processed 1 url(s)")
+
+                        # _process_connection must discard current_thread from worker_threads
+                        self.assertEqual(server.worker_threads, set())
 
     def test_process_connection_with_empty_url(self):
         empty_url = ''
