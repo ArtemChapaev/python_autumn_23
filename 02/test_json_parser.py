@@ -62,6 +62,18 @@ class MyParseJson(unittest.TestCase):
         ]
         self.assertEqual(expected_calls, mock_callback.mock_calls)
 
+        json_str = '{"key1": "Word1 word3"}'
+        required_fields = ["key1"]
+        keywords = ["word1", "word3"]
+        mock_callback = mock.Mock(return_value=None)
+
+        parse_json(json_str, required_fields, keywords, mock_callback)
+        expected_calls = [
+            mock.call("key1", "word1"),
+            mock.call("key1", "word3")
+        ]
+        self.assertEqual(expected_calls, mock_callback.mock_calls)
+
     def test_not_called_callback(self):
         json_str = '{"key1": "Word1 word2", "key2": "word2 word3"}'
 

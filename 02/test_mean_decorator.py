@@ -16,15 +16,17 @@ class TestMeanDecorator(unittest.TestCase):
     def test_mean_time_execution(self):
         with mock.patch("builtins.print") as mock_print:
             with mock.patch("time.time") as mock_time:
-                mock_time.side_effect = [0, 1, 1, 2, 2, 3]
+                mock_time.side_effect = [0, 1, 1, 2, 2, 3, 3, 4]
 
                 @mean(3)
                 def dummy_function():
                     time.sleep(1)
 
-                dummy_function()
+                for _ in range(4):
+                    dummy_function()
 
                 expected_calls = [
+                    mock.call("Mean time of executing of dummy_function is 1.0"),
                     mock.call("Mean time of executing of dummy_function is 1.0"),
                     mock.call("Mean time of executing of dummy_function is 1.0"),
                     mock.call("Mean time of executing of dummy_function is 1.0")
@@ -34,15 +36,17 @@ class TestMeanDecorator(unittest.TestCase):
     def test_zero_time_execution(self):
         with mock.patch("builtins.print") as mock_print:
             with mock.patch("time.time") as mock_time:
-                mock_time.side_effect = [0, 0, 0, 0]
+                mock_time.side_effect = [0, 0, 0, 0, 0, 0]
 
                 @mean(2)
                 def dummy_function():
                     pass
 
-                dummy_function()
+                for _ in range(3):
+                    dummy_function()
 
                 expected_calls = [
+                    mock.call("Mean time of executing of dummy_function is 0.0"),
                     mock.call("Mean time of executing of dummy_function is 0.0"),
                     mock.call("Mean time of executing of dummy_function is 0.0")
                 ]
@@ -51,19 +55,21 @@ class TestMeanDecorator(unittest.TestCase):
     def test_different_time_execution(self):
         with mock.patch("builtins.print") as mock_print:
             with mock.patch("time.time") as mock_time:
-                mock_time.side_effect = [0, 1, 1, 2, 2, 3, 3, 5]
+                mock_time.side_effect = [0, 1, 1, 2, 2, 3, 3, 5, 5, 8]
 
                 @mean(4)
                 def dummy_function():
                     time.sleep(1)
 
-                dummy_function()
+                for _ in range(5):
+                    dummy_function()
 
                 expected_calls = [
                     mock.call("Mean time of executing of dummy_function is 1.0"),
                     mock.call("Mean time of executing of dummy_function is 1.0"),
                     mock.call("Mean time of executing of dummy_function is 1.0"),
-                    mock.call("Mean time of executing of dummy_function is 1.25")
+                    mock.call("Mean time of executing of dummy_function is 1.25"),
+                    mock.call("Mean time of executing of dummy_function is 1.75")
                 ]
                 self.assertEqual(expected_calls, mock_print.mock_calls)
 

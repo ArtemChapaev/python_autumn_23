@@ -6,17 +6,19 @@ def mean(k: int):
         raise TypeError("k must be int")
 
     def mean_inner(func):
-        def inner(*args, **kwargs):
-            res = None
+        last_calls_time = []
 
-            full_time = 0
-            for i in range(1, k + 1):
-                start_ts = time.time()
-                res = func(*args, **kwargs)
-                end_ts = time.time()
-                delta_time = end_ts - start_ts
-                full_time += delta_time
-                print(f"Mean time of executing of {func.__name__} is {full_time / i}")
+        def inner(*args, **kwargs):
+            start_ts = time.time()
+            res = func(*args, **kwargs)
+            end_ts = time.time()
+
+            nonlocal last_calls_time
+            if (len(last_calls_time)) == k:
+                last_calls_time.pop(0)
+
+            last_calls_time.append(end_ts - start_ts)
+            print(f"Mean time of executing of {func.__name__} is {sum(last_calls_time) / len(last_calls_time)}")
 
             return res
         return inner
