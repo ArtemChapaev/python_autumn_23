@@ -68,6 +68,24 @@ class TestLRUCahe(unittest.TestCase):
         self.assertEqual(cache.get("k2"), "val2")
         self.assertEqual(cache.get("k3"), "val3")
 
+    def test_lru_cache_set_new_value(self):
+        cache = LRUCache(2)
+
+        cache.set("k2", "val2")
+        cache.set("k3", "val3")
+
+        self.assertEqual(cache.get("k1"), None)
+        self.assertEqual(cache.get("k2"), "val2")
+        self.assertEqual(cache.get("k3"), "val3")
+
+        # set new value to exist item, which is last used
+        cache.set("k2", "new_val2")
+        cache.set("k1", "val1")
+
+        self.assertEqual(cache.get("k1"), "val1")
+        self.assertEqual(cache.get("k2"), "new_val2")
+        self.assertEqual(cache.get("k3"), None)
+
     def test_lru_cache_error_using(self):
         with self.assertRaises(TypeError) as err:
             LRUCache('0')
