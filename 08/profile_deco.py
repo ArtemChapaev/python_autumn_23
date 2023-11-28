@@ -5,44 +5,45 @@ import io
 
 
 def profile_deco(func):
-    _stats = []
+    profile = cProfile.Profile()
 
     def print_stat():
-        for stat in _stats:
-            print(stat)
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        wrapper.print_stat = print_stat
-
-        profile = cProfile.Profile()
-        profile.enable()
-        result = func(*args, **kwargs)
-        profile.disable()
-
         stream = io.StringIO()
         stat = pstats.Stats(profile, stream=stream).sort_stats("cumulative")
         stat.print_stats()
-        _stats.append(stream.getvalue())
+        print(stream.getvalue())
 
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        profile.enable()
+        result = func(*args, **kwargs)
+        profile.disable()
         return result
+
+    wrapper.print_stat = print_stat
     return wrapper
 
 
-# @profile_deco
-# def add(a, b):
-#     return a + b
-#
-#
-# @profile_deco
-# def sub(a, b):
-#     return a - b
-#
-#
-# add(1, 2)
-# add(4, 5)
-# sub(4, 5)
-#
-#
-# add.print_stat()
-# sub.print_stat()
+@profile_deco
+def add(a, b):
+    try:
+        return a + b
+    except TypeError:
+        return 0
+
+
+@profile_deco
+def sub(a, b):
+    try:
+        return a - b
+    except TypeError:
+        return 0
+
+
+add(1, 2)
+add(4, 5)
+sub(1, 5)
+
+
+add.print_stat()
+sub.print_stat()

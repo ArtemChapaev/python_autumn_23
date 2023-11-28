@@ -5,8 +5,15 @@ from memory_profiler import profile
 from different_classes import Thing, Backpack, SlotsBackpack, WeakrefBackpack
 
 
+def create_things():
+    return [Thing()] * 6
+
+
 @profile
 def test_speed_of_create_backpack(cls, count, passport, lenses, keys, charger, laptop, napkins):
+    if count < 0:
+        return
+
     timestamp1 = time.time()
 
     result = [cls(passport, lenses, keys, charger, laptop, napkins)
@@ -16,76 +23,77 @@ def test_speed_of_create_backpack(cls, count, passport, lenses, keys, charger, l
     return {'time': timestamp2 - timestamp1, 'res': result}
 
 
-passport1 = Thing()
-lenses1 = Thing()
-keys1 = Thing()
-charger1 = Thing()
-laptop1 = Thing()
-napkins1 = Thing()
+def test_different_classes_creation(count, pack):
+    usual_backpacks = test_speed_of_create_backpack(
+        Backpack, count, *pack)
 
-passport2 = Thing()
-lenses2 = Thing()
-keys2 = Thing()
-charger2 = Thing()
-laptop2 = Thing()
-napkins2 = Thing()
+    slots_backpacks = test_speed_of_create_backpack(
+        SlotsBackpack, count, *pack)
 
-N = 10 ** 8
+    weakref_backpacks = test_speed_of_create_backpack(
+        WeakrefBackpack, count, *pack)
 
-usual_backpack_created = test_speed_of_create_backpack(
-    Backpack, N, passport1, lenses1, keys1, charger1, laptop1, napkins1)
+    print(f"For usual class create of {count} objects: {usual_backpacks['time']}")
+    print(f"For class with slots create of {count} objects: {slots_backpacks['time']}")
+    print(f"For class with weak references create of {count} objects: {weakref_backpacks['time']}")
 
-slots_backpack_created = test_speed_of_create_backpack(
-    SlotsBackpack, N, passport1, lenses1, keys1, charger1, laptop1, napkins1)
-
-weakref_backpack_created = test_speed_of_create_backpack(
-    WeakrefBackpack, N, passport1, lenses1, keys1, charger1, laptop1, napkins1)
-
-print(f"For usual class create of {N} objects: {usual_backpack_created['time']}")
-print(f"For class with slots create of {N} objects: {slots_backpack_created['time']}")
-print(f"For class with weak references create of {N} objects: {weakref_backpack_created['time']}")
+    return usual_backpacks['res'], slots_backpacks['res'], weakref_backpacks['res']
 
 
 @profile
-def test_speed_of_swap_values_of_backpack(
-        backpacks, new_passport, new_lenses, new_keys, new_charger, new_laptop, new_napkins):
+def test_speed_of_swap_values_of_backpack(backpacks, new_pack):
     if isinstance(backpacks[0], WeakrefBackpack):
         timestamp1 = time.time()
         for backpack in backpacks:
-            backpack.passport = weakref.ref(new_passport)
-            backpack.lenses = weakref.ref(new_lenses)
-            backpack.keys = weakref.ref(new_keys)
-            backpack.charger = weakref.ref(new_charger)
-            backpack.laptop = weakref.ref(new_laptop)
-            backpack.napkins = weakref.ref(new_napkins)
+            backpack.passport = weakref.ref(new_pack[0])
+            backpack.lenses = weakref.ref(new_pack[1])
+            backpack.keys = weakref.ref(new_pack[2])
+            backpack.charger = weakref.ref(new_pack[3])
+            backpack.laptop = weakref.ref(new_pack[4])
+            backpack.napkins = weakref.ref(new_pack[5])
 
         timestamp2 = time.time()
     else:
         timestamp1 = time.time()
         for backpack in backpacks:
-            backpack.passport = new_passport
-            backpack.lenses = new_lenses
-            backpack.keys = new_keys
-            backpack.charger = new_charger
-            backpack.laptop = new_laptop
-            backpack.napkins = new_napkins
+            backpack.passport = new_pack[0]
+            backpack.lenses = new_pack[1]
+            backpack.keys = new_pack[2]
+            backpack.charger = new_pack[3]
+            backpack.laptop = new_pack[4]
+            backpack.napkins = new_pack[5]
 
         timestamp2 = time.time()
 
     return {'time': timestamp2 - timestamp1, 'res': backpacks}
 
 
-usual_backpack_swapped = test_speed_of_swap_values_of_backpack(
-    usual_backpack_created['res'], passport2, lenses2, keys2, charger2, laptop2, napkins2)
+def test_different_classes_values_swap(usual_backpacks, slots_backpacks, weakref_backpacks, new_pack):
+    usual_count = len(usual_backpacks)
+    slots_count = len(usual_backpacks)
+    weakref_count = len(usual_backpacks)
 
-slots_backpack_swapped = test_speed_of_swap_values_of_backpack(
-    slots_backpack_created['res'], passport2, lenses2, keys2, charger2, laptop2, napkins2)
+    usual_backpack_swapped = test_speed_of_swap_values_of_backpack(
+        usual_backpacks, *new_pack)
 
-weakref_backpack_swapped = test_speed_of_swap_values_of_backpack(
-    weakref_backpack_created['res'], passport2, lenses2, keys2, charger2, laptop2, napkins2)
+    slots_backpack_swapped = test_speed_of_swap_values_of_backpack(
+        slots_backpacks, *new_pack)
 
-print()
-print(f"For usual class swap values of {N} objects: {usual_backpack_swapped['time']}")
-print(f"For class with slots swap values of {N} objects: {slots_backpack_swapped['time']}")
-print(f"For class with weak references swap values of {N}",
-      "objects: {weakref_backpack_swapped['time']}")
+    weakref_backpack_swapped = test_speed_of_swap_values_of_backpack(
+        weakref_backpacks, *new_pack)
+
+    print()
+    print(f"For usual class swap values of {usual_count} objects: {usual_backpack_swapped['time']}")
+    print(f"For class with slots swap values of {slots_count} objects: {slots_backpack_swapped['time']}")
+    print(f"For class with weak references swap values of {weakref_count}",
+          f"objects: {weakref_backpack_swapped['time']}")
+
+
+if __name__ == '__main__':
+    N = 10 ** 8
+
+    pack_1 = create_things()
+    usual_objs, slots_objs, weakref_objs = test_different_classes_creation(N, pack_1)
+
+    pack_2 = create_things()
+    test_different_classes_values_swap(usual_objs, slots_objs, weakref_objs, pack_2)
