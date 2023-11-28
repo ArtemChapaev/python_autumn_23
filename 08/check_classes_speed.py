@@ -68,7 +68,12 @@ def test_speed_of_swap_values_of_backpack(backpacks, new_pack):
     return {'time': timestamp2 - timestamp1, 'res': backpacks}
 
 
-def test_different_classes_values_swap(usual_backpacks, slots_backpacks, weakref_backpacks, new_pack):
+def test_different_classes_values_swap(
+    usual_backpacks,
+    slots_backpacks,
+    weakref_backpacks,
+    new_pack
+):
     usual_count = len(usual_backpacks)
     slots_count = len(usual_backpacks)
     weakref_count = len(usual_backpacks)
@@ -84,8 +89,9 @@ def test_different_classes_values_swap(usual_backpacks, slots_backpacks, weakref
 
     print()
     print(f"For usual class swap values of {usual_count} objects: {usual_backpack_swapped['time']}")
-    print(f"For class with slots swap values of {slots_count} objects: {slots_backpack_swapped['time']}")
-    print(f"For class with weak references swap values of {weakref_count}",
+    print(f"For class with slots swap values of {slots_count} objects: "
+          f"{slots_backpack_swapped['time']}")
+    print(f"For class with weak references swap values of {weakref_count} "
           f"objects: {weakref_backpack_swapped['time']}")
 
 
