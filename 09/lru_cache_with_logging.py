@@ -58,6 +58,8 @@ class LRUCache:
         logging.critical("_find_last_used_cache_item: Not found last used cache item. cache = `%s`",
                          self.cache)
 
+        return None
+
     def _free_cache_item(self, key):
         del self.cache[key]
         del self.last_call_for_keys[key]
@@ -82,6 +84,51 @@ class LRUCache:
         self.queue_for_delete[self.calls_count] = key
         self.last_call_for_keys[key] = self.calls_count
         logging.debug("set: `%s` is used in `%s`th cache call", key, self.calls_count)
+
+
+def configure_file_handler(filter_logging):
+    formatter1 = logging.Formatter(
+        "\t%(asctime)s\t%(levelname)s\t%(name)s\t%(message)s"
+    )
+
+    file_handler = logging.FileHandler(filename='cache.log', mode='w')
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter1)
+
+    if filter_logging:
+        file_handler.addFilter(CustomFilter())
+
+    return file_handler
+
+
+def configure_stream_handler(filter_logging):
+    formatter2 = logging.Formatter(
+        "-s\t%(asctime)s\t%(levelname)s\t%(name)s\t%(message)s"
+    )
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.DEBUG)
+    stream_handler.setFormatter(formatter2)
+
+    if filter_logging:
+        stream_handler.addFilter(CustomFilter())
+
+    return stream_handler
+
+
+def configure_logger(arguments):
+    file_handler = configure_file_handler(arguments.filter_logging)
+
+    if arguments.stdout_logging:
+        stream_handler = configure_stream_handler(arguments.filter_logging)
+
+    # configurate root logger
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+
+    root.addHandler(file_handler)
+    if arguments.stdout_logging:
+        root.addHandler(stream_handler)
 
 
 class CustomFilter(logging.Filter):
@@ -114,34 +161,6 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--filter_logging', action="store_true")
     args = parser.parse_args()
 
-    # configurate FileHandler
-    formatter1 = logging.Formatter(
-        "\t%(asctime)s\t%(levelname)s\t%(name)s\t%(message)s"
-    )
-
-    file_handler = logging.FileHandler(filename='cache.log', mode='w')
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(formatter1)
-
-    if args.filter_logging:
-        file_handler.addFilter(CustomFilter())
-
-    # if stdout_logging configurate StreamHandler
-    if args.stdout_logging:
-        formatter2 = logging.Formatter(
-            "-s\t%(asctime)s\t%(levelname)s\t%(name)s\t%(message)s"
-        )
-
-        stream_handler = logging.StreamHandler()
-        stream_handler.setLevel(logging.DEBUG)
-        stream_handler.setFormatter(formatter2)
-
-    # configurate root logger
-    root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
-
-    root.addHandler(file_handler)
-    if args.stdout_logging:
-        root.addHandler(stream_handler)
+    configure_logger(args)
 
     use_cache()
