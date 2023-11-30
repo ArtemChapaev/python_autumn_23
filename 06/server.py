@@ -1,41 +1,23 @@
-import sys
+import argparse
 import socket
 import threading
 import json
-from urllib.request import urlopen
-from urllib.error import HTTPError
+import urllib.request
+import urllib.error
 from collections import Counter
 
 from bs4 import BeautifulSoup
 
 
 def check_arguments():
-    arguments = sys.argv
-    if len(arguments) != 5:
-        raise RuntimeError(f"Need 4 arguments, it has got {len(arguments) - 1}")
+    parser = argparse.ArgumentParser()
 
-    if arguments[1] == '-w':
-        workers_count = arguments[2]
-    elif arguments[3] == '-w':
-        workers_count = arguments[4]
-    else:
-        raise RuntimeError("Need argument -w key")
+    parser.add_argument("-w", "--workers", type=int, required=True, nargs=1)
+    parser.add_argument("-k", "--k_top_words", type=int, required=True, nargs=1)
 
-    if arguments[1] == '-k':
-        count_top_words = arguments[2]
-    elif arguments[3] == '-k':
-        count_top_words = arguments[4]
-    else:
-        raise RuntimeError("Need argument with -k key")
+    args = parser.parse_args()
 
-    # if error types will be ValueError will be raised
-    workers_count = int(workers_count)
-    count_top_words = int(count_top_words)
-
-    if workers_count < 1 or count_top_words < 1:
-        raise ValueError("Arguments must be bigger then 0")
-
-    return workers_count, count_top_words
+    return args.workers[0], args.k_top_words[0]
 
 
 class Server:
@@ -69,9 +51,9 @@ class Server:
     @staticmethod
     def _fetch_url(url):
         try:
-            with urlopen(url) as response:
+            with urllib.request.urlopen(url) as response:
                 return response.read().decode()
-        except HTTPError:
+        except urllib.error.HTTPError:
             return ""
 
     def _get_top_words_from_text(self, text):

@@ -1,20 +1,19 @@
-import sys
+import argparse
 import socket
 import threading
 
 
-def check_arguments():
-    arguments = sys.argv
-    if len(arguments) != 3:
-        raise RuntimeError(f"Need 2 arguments, it has got {len(arguments) - 1}")
+def parse_arguments():
+    parser = argparse.ArgumentParser()
 
-    # if error type ValueError will be raised
-    threads_count = int(arguments[1])
+    parser.add_argument("threads_count", type=int)
+    parser.add_argument("filename", type=str)
 
-    if threads_count < 1:
-        raise ValueError("threads_count must be bigger then 0")
+    args = parser.parse_args()
 
-    return threads_count, arguments[2]
+    print(args.threads_count, args.filename)
+
+    return args.threads_count, args.filename
 
 
 class Client:
@@ -59,7 +58,8 @@ class Client:
     def start(self, filename):
         # if not open FileNotFoundError will be raised
         with open(filename, 'r', encoding='utf-8') as file:
-            for url in file:
+            url = file.readline()
+            while url:
                 url = url.strip()
                 # while one thread doesn't become free, we are in this loop
                 while True:
@@ -69,10 +69,11 @@ class Client:
                         with self.lock:
                             self.threads.add(thread)
                         break
+                url = file.readline()
 
 
 if __name__ == '__main__':
-    num_threads, url_filename = check_arguments()
+    num_threads, url_filename = parse_arguments()
 
     client = Client(num_threads)
     client.start(url_filename)
