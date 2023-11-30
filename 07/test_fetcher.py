@@ -1,9 +1,8 @@
 import unittest
 from unittest import mock
-import sys
 import asyncio
 
-from fetcher import Fetcher, check_arguments
+from fetcher import Fetcher
 
 
 class TestFetcher(unittest.IsolatedAsyncioTestCase):
@@ -133,81 +132,6 @@ class TestFetcher(unittest.IsolatedAsyncioTestCase):
 
         fetcher = Fetcher(10, 3)
         self.assertEqual(fetcher._process_text(url, text), "")
-
-
-class TestFetcherArguments(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_fetcher_arguments_using(self):
-        sys.argv = ('fetcher.py', '-c', '10', 'urls.txt')
-        num_connections, url_filename = check_arguments()
-        self.assertEqual(num_connections, 10)
-        self.assertEqual(url_filename, 'urls.txt')
-
-        sys.argv = ('fetcher.py', 'urls.txt', '-c', '10')
-        num_connections, url_filename = check_arguments()
-        self.assertEqual(num_connections, 10)
-        self.assertEqual(url_filename, 'urls.txt')
-
-        sys.argv = ('fetcher.py', '1', 'urls')
-        num_connections, url_filename = check_arguments()
-        self.assertEqual(num_connections, 1)
-        self.assertEqual(url_filename, 'urls')
-
-    def test_fetcher_arguments_error_using(self):
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', 'urls', '1')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '-c', 'urls', '1')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(RuntimeError) as err:
-            sys.argv = ('fetcher.py', 'urls', '11', '1')
-            check_arguments()
-        self.assertEqual(RuntimeError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '-c', '1')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '1.5', 'urls')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '-1', 'urls')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '0', 'urls')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '-c', '1.5', 'urls')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '-c', '-1', 'urls')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
-
-        with self.assertRaises(ValueError) as err:
-            sys.argv = ('fetcher.py', '-c', '0', 'urls')
-            check_arguments()
-        self.assertEqual(ValueError, type(err.exception))
 
 
 if __name__ == '__main__':

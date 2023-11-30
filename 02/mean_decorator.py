@@ -18,7 +18,8 @@ def mean(k: int):
                 last_calls_time.pop(0)
 
             last_calls_time.append(end_ts - start_ts)
-            print(f"Mean time of executing of {func.__name__} is {sum(last_calls_time) / len(last_calls_time)}")
+            print(f"Mean time of executing of {func.__name__} is "
+                  f"{sum(last_calls_time) / len(last_calls_time)}")
 
             return res
         return inner

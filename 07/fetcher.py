@@ -1,5 +1,5 @@
 import asyncio
-import sys
+import argparse
 import json
 from collections import Counter
 
@@ -7,34 +7,21 @@ import aiohttp
 from bs4 import BeautifulSoup
 
 
-def check_arguments():
-    arguments = sys.argv
-    if len(arguments) != 3 and len(arguments) != 4:
-        raise RuntimeError(f"Need 2 or 3 arguments, it has got {len(arguments) - 1}")
+def parse_arguments():
+    parser = argparse.ArgumentParser()
 
-    if len(arguments) == 4:
-        if arguments[1] == '-c':
-            connections_count = arguments[2]
-            filename = arguments[3]
-        elif arguments[2] == '-c':
-            connections_count = arguments[3]
-            filename = arguments[1]
-        else:
-            raise RuntimeError("Need argument -c key")
+    parser.add_argument("connections_or_file", nargs='?')
+    parser.add_argument("filename", type=str)
+    parser.add_argument("-c", "--connections", type=int)
+
+    args = parser.parse_args()
+
+    if args.connections is None:
+        connections_count = args.connections
     else:
-        connections_count = arguments[1]
-        filename = arguments[2]
+        connections_count = int(args.connections_or_file)
 
-    # if error type ValueError will be raised
-    connections_count = int(connections_count)
-
-    if connections_count < 1:
-        raise ValueError("connections_count must be bigger then 0")
-
-    if not isinstance(filename, str):
-        raise TypeError("arguments must be connections count and str (file with urls)")
-
-    return connections_count, filename
+    return connections_count, args.filename
 
 
 class Fetcher:
@@ -67,6 +54,8 @@ class Fetcher:
             try:
                 result = await self._process_url(url)
                 print(result)
+            except aiohttp.ClientConnectorError:
+                pass
             finally:
                 self.que.task_done()
 
@@ -80,9 +69,10 @@ class Fetcher:
 
         # if not open FileNotFoundError will be raised
         with open(filename, 'r', encoding='utf-8') as file:
-            for url in file:
-                url = url.strip()
-                await self.que.put(url)
+            url = file.readline()
+            while url:
+                await self.que.put(url.strip())
+                url = file.readline()
 
         await self.que.join()
 
@@ -91,7 +81,7 @@ class Fetcher:
 
 
 if __name__ == '__main__':
-    num_connections, url_filename = check_arguments()
+    num_connections, url_filename = parse_arguments()
     fetcher = Fetcher(num_connections)
 
     asyncio.run(fetcher.start(url_filename))
