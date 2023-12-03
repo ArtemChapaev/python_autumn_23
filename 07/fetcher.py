@@ -16,7 +16,7 @@ def parse_arguments():
 
     args = parser.parse_args()
 
-    if args.connections is None:
+    if args.connections is not None:
         connections_count = args.connections
     else:
         connections_count = int(args.connections_or_file)
